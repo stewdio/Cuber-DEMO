@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<meta name="description" content="Rubik’s Cube">
+		<meta name="keywords" content="Erno Rubik’s Cube">
+		
+		<link rel="stylesheet" type="text/css" href="styles/base.css">
+		<link rel="icon" type="image/png" href="media/cuber-favicon-0064x0064.png">
+		<link rel="apple-touch-icon" href="media/cuber-favicon-0144x0144.png">
+		
+		<title>Cuber</title>
+		
+
+		<!--  Third-party frameworks and scaffolds.  -->
+
+		<script charset="utf-8" src="scripts/vendor/three.min.js"></script>
+		<script charset="utf-8" src="scripts/vendor/CSS3DRenderer.js"></script>
+		<script charset="utf-8" src="scripts/vendor/SVGRenderer.js"></script>
+		<script charset="utf-8" src="scripts/vendor/tween.min.js"></script>
+		<script charset="utf-8" src="scripts/vendor/TrackballControls.js"></script>
+		<script charset="utf-8" src="scripts/vendor/jquery.js"></script>
+		<script charset="utf-8" src="scripts/vendor/skip.js"></script>		
+		
+
+		<!--  Here are the Cube guts. Enjoy.  -->
+
+		<script charset="utf-8" src="scripts/colors.js"></script>
+		<script charset="utf-8" src="scripts/directions.js"></script>
+		<script charset="utf-8" src="scripts/queues.js"></script>
+		<script charset="utf-8" src="scripts/twists.js"></script>
+		<script charset="utf-8" src="scripts/cubelets.js"></script>
+		<script charset="utf-8" src="scripts/groups.js"></script>
+		<script charset="utf-8" src="scripts/slices.js"></script>
+		<script charset="utf-8" src="scripts/folds.js"></script>
+		<script charset="utf-8" src="scripts/cubes.js"></script>		
+		<script charset="utf-8" src="scripts/solvers.js"></script>
+		<script charset="utf-8" src="scripts/solvers/stewart.js"></script>		
+		<script charset="utf-8" src="scripts/erno.js"></script>		
+	
+
+	</head>
+	<body class="graydient">
+
+
+		<div id="cubeHasTwistsQueued"></div>
+		<div id="cubeIsTweening"></div>
+		<div id="twist"></div>
+		<div id="captions"></div>
+		<div id="container"></div>
+		<div id="controlsOpen">
+			<div class="pad">
+				<a href="." onclick="$('#controls').fadeIn( 500 );$('#controlsOpen').fadeOut( 500 );return false">Cube Control</a>
+			</div>
+		</div>
+		<div id="controls">
+			<div class="pad">
+
+				<a id="controlsClose" class="key" href="." onclick="$('#controls').fadeOut( 500 );$('#controlsOpen').fadeIn( 500 );return false">&uarr;</a>
+
+
+
+
+				<div id="presets">
+					<h2>Presets</h2>
+					<a href="javascript:cube.presetNormal()">Normal</a>
+					<a href="javascript:cube.presetText()">Text</a>
+					<a href="javascript:cube.presetWireframe()">Wireframe</a>
+					<a href="javascript:cube.presetPurty()">Purty colors</a>
+					<a href="javascript:cube.presetHighlightCore()">Highlight core</a>
+					<a href="javascript:cube.presetHighlightCenters()">Highlight centers</a>
+					<a href="javascript:cube.presetHighlightEdges()">Highlight edges</a>
+					<a href="javascript:cube.presetHighlightCorners()">Highlight corners</a>
+					<a href="javascript:cube.presetHighlightWhite()">Highlight white</a>
+				</div>
+
+
+
+
+				<div id="attributes">
+					<h2>Attributes</h2>				
+					<label><input type="checkbox" id="attributeFaceLabels" checked>Cube face labels</label>
+					<label><input type="checkbox" id="attributePlastics"   checked>Plastic surfaces</label>
+					<label><input type="checkbox" id="attributeIntroverts" checked>Introvert surfaces</label>
+					<label><input type="checkbox" id="attributeStickers"   checked>Color stickers</label>
+					<label><input type="checkbox" id="attributeIds"        checked>Cubelet Ids</label>
+					<label><input type="checkbox" id="attributeTexts"      checked>Texts</label>
+					<label><input type="checkbox" id="attributeWireframes" checked>Wireframes</label>
+				</div>
+
+
+
+
+				<div id="actions">
+					<h2>Actions</h2>
+					<a href="javascript:cube.presetDemo()">Start demo mode</a>
+					<a href="javascript:cube.presetDemoStop()">Stop demo mode</a>
+					<a href="javascript:cube.isShuffling=true;cube.isRotating=true;updateControls()">Start shuffle &amp; rotate</a>
+					<a href="javascript:cube.isShuffling=false;cube.isRotating=false;updateControls()">Stop shuffle &amp; rotate</a>
+					<a href="javascript:cube.solve()">Solve the Top Cross</a>
+					<label><input type="checkbox" id="actionShuffle">Shuffle</label>
+					<label><input type="checkbox" id="actionRotate">Auto rotate</label>
+					<label><input type="checkbox" id="actionNotation">Show twist notation</label>
+				</div>
+
+
+
+
+				<div id="commands">
+					<h2>Keyboard commands</h2>
+					<div class="keyBundle">
+						<a class="key" href="javascript:cube.twistQueue.add('X')">X</a><a class="key" href="javascript:cube.twistQueue.add('x')">x</a> whole cube<br>
+						<a class="key" href="javascript:cube.twistQueue.add('L')">L</a><a class="key" href="javascript:cube.twistQueue.add('l')">l</a> left face<br>
+						<a class="key" href="javascript:cube.twistQueue.add('M')">M</a><a class="key" href="javascript:cube.twistQueue.add('m')">m</a> middle slice<br>
+						<a class="key" href="javascript:cube.twistQueue.add('R')">R</a><a class="key" href="javascript:cube.twistQueue.add('r')">r</a> right face<br>
+					</div>
+					<div class="keyBundle">
+						<a class="key" href="javascript:cube.twistQueue.add('Y')">Y</a><a class="key" href="javascript:cube.twistQueue.add('y')">y</a> whole cube<br>
+						<a class="key" href="javascript:cube.twistQueue.add('U')">U</a><a class="key" href="javascript:cube.twistQueue.add('u')">u</a> up face<br>
+						<a class="key" href="javascript:cube.twistQueue.add('E')">E</a><a class="key" href="javascript:cube.twistQueue.add('e')">e</a> equator slice<br>
+						<a class="key" href="javascript:cube.twistQueue.add('D')">D</a><a class="key" href="javascript:cube.twistQueue.add('d')">d</a> down face<br>
+					</div>
+					<div class="keyBundle">
+						<a class="key" href="javascript:cube.twistQueue.add('Z')">Z</a><a class="key" href="javascript:cube.twistQueue.add('z')">z</a> whole cube<br>
+						<a class="key" href="javascript:cube.twistQueue.add('F')">F</a><a class="key" href="javascript:cube.twistQueue.add('f')">f</a> front face<br>
+						<a class="key" href="javascript:cube.twistQueue.add('S')">S</a><a class="key" href="javascript:cube.twistQueue.add('s')">s</a> standing slice<br>
+						<a class="key" href="javascript:cube.twistQueue.add('B')">B</a><a class="key" href="javascript:cube.twistQueue.add('b')">b</a> back face<br>
+					</div>
+				</div>
+
+
+
+
+				<div>
+					<h2>Texts</h2>
+					<textarea cols="6" rows="3" maxlength="18" wrap="hard" id="texts">BEYONDRUBIKs  CUBE</textarea>
+					Hit return to or click elsewhere to apply changes.
+				</div>
+				<br><br>
+
+				
+
+
+			</div>
+		</div>
+	</body>
+</html>
